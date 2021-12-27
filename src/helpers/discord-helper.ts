@@ -13,11 +13,11 @@ export default class DiscordHelper {
 
   _createWebhookData(saleInfo:any) {
     return {
-      "username": "Flutter Sales Bot",
+      "username": "Lifinity Flares Sales Bot",
       "embeds": [
         {
           "author": {
-            "name": "Flutter Sales Bot"
+            "name": "Lifinity Flares Sales Bot"
           },
           "fields": [
             {
