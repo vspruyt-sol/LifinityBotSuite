@@ -49,7 +49,7 @@ export default class DiscordHelper {
           "title": `${saleInfo.nftInfo.id} → SOLD (test)`,
           "url": `https://explorer.solana.com/tx/${saleInfo.txSignature}`,
           "thumbnail": {
-            "url": ` https://nft.lifinity.io/api/download/${saleInfo.nftInfo.id}`
+            "url": `https://nft.lifinity.io/api/download/${saleInfo.nftInfo.id}`
           },
           "timestamp": new Date(saleInfo.time * 1000).toISOString()
         }
