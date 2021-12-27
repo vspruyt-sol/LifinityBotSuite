@@ -46,7 +46,7 @@ export default class DiscordHelper {
             }
           ],
           "color": 14303591,
-          "title": `${saleInfo.nftInfo.id} → SOLD`,
+          "title": `${saleInfo.nftInfo.id} → SOLD (test)`,
           "url": `https://explorer.solana.com/tx/${saleInfo.txSignature}`,
           "thumbnail": {
             "url": ` https://nft.lifinity.io/api/download/${saleInfo.nftInfo.id}`
