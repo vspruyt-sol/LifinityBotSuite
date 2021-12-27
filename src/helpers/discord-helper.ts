@@ -46,10 +46,10 @@ export default class DiscordHelper {
             }
           ],
           "color": 14303591,
-          "title": `${saleInfo.nftInfo.id} → SOLD (test)`,
+          "title": `${saleInfo.nftInfo.id} → SOLD`,
           "url": `https://explorer.solana.com/tx/${saleInfo.txSignature}`,
           "thumbnail": {
-            "url": `${saleInfo.nftInfo.image}`
+            "url": `https://media4.giphy.com/media/rzgsa5Saxn2nPchy1F/giphy.gif?cid=ecf05e475fedbee0cd4345cbcaa205c78f08ab2bb3d594a4&rid=giphy.gif`
           },
           "timestamp": new Date(saleInfo.time * 1000).toISOString()
         }
