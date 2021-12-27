@@ -7,8 +7,9 @@
   "scripts": {
     "build": "tsc -t es6",
     "console_run": "node run-script-standalone.js --config='./config/sample.json' --outputType=console",
-    "console_cron": "node cron.js --config='./config/sample.json' --debugMode=true --outputType=discord",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "console_cron": "node cron.js --config='./config/sample.json' --debugMode=true --outputType=console",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node cron.js --config='./config/sample.json' --debugMode=true --outputType=discord"
   },
   "author": "",
   "license": "ISC",
