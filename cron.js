@@ -17,8 +17,8 @@ let config = JSON.parse(fs.readFileSync(configPath).toString());
 config = _.assignIn(config, overrides);
 
 console.log('Lets get this show on the road');
-cron.schedule('0 */3 * * * *', () => {
-  console.log('Running a task every 3rd minute');
+cron.schedule('0 */1 * * * *', () => {
+  console.log('Running a task every minute');
   let tracker = new SalesTracker(config, outputType);
   tracker.checkSales();
 });
