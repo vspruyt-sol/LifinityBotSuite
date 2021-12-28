@@ -22,7 +22,7 @@ class DiscordHelper {
         this.config = config;
     }
     _createWebhookData(saleInfo) {
-        let idNbr = saleInfo.nftInfo.id.replace('LIFINITY Flares #', '');
+        const idNbr = saleInfo.nftInfo.id.replace('LIFINITY Flares #', '');
         return {
             "username": "Lifinity Flares Sales Bot",
             "embeds": [
