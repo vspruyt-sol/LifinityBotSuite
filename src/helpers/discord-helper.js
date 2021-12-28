@@ -19,11 +19,11 @@ export default class DiscordHelper {
     _createWebhookData(saleInfo) {
         const idNbr = saleInfo.nftInfo.id.replace('LIFINITY Flares #', '');
         return {
-            "username": "Lifinity Flares Sales Bot",
+            "username": "Flare Sales Bot",
             "embeds": [
                 {
                     "author": {
-                        "name": "Lifinity Flares Sales Bot"
+                        "name": "Flare Sales Bot"
                     },
                     "fields": [
                         {
