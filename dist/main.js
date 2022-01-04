@@ -40,6 +40,7 @@ class SaleTracker {
                 return lodash_1.default.includes(lockFile.processedSignatures, tx.signature);
             });
             console.log("Got transactions", confirmedSignatures.length);
+            //console.log(await this.getSOLtoUSD());
             for (let confirmedSignature of confirmedSignatures) {
                 let saleInfo = yield me._parseTransactionForSaleInfo(confirmedSignature.signature);
                 if (saleInfo) {
@@ -51,6 +52,15 @@ class SaleTracker {
             console.log("Done");
         });
     }
+    /*async getSOLtoUSD() {
+      const response = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=solana&vs_currencies=usd', {
+      method: 'GET',
+      headers: {
+      'accept': 'application/json',
+      }});
+      console.log(JSON.stringify(response));
+      return response;
+  }*/
     /**
      * A basic factory to return the output plugin.
      * @returns

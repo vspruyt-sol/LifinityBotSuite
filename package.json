@@ -6,7 +6,7 @@
   "main": "index.js",
   "scripts": {
     "build": "tsc -t es6",
-    "console_run": "node run-script-standalone.js --config='./config/sample.json' --outputType=console",
+    "console_run": "node run-script-standalone.js --config='./config/sample.json' --outputType=discord",
     "console_cron": "node cron.js --config='./config/sample.json' --debugMode=true --outputType=console",
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node cron.js --config='./config/sample.json' --debugMode=true --outputType=discord"
@@ -27,11 +27,13 @@
     "moment": "^2.29.1",
     "moment-timezone": "^0.5.34",
     "node-cron": "^3.0.0",
+    "node-fetch": "^3.0.3",
     "twitter": "^1.7.1",
     "typescript": "^4.4.3",
     "yargs": "^17.2.1"
   },
   "devDependencies": {
+    "@types/node-fetch": "^3.0.3",
     "@types/twitter": "^1.7.1",
     "@types/yargs": "^17.0.3"
   }

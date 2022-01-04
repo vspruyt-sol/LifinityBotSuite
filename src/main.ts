@@ -6,6 +6,7 @@ import TwitterHelper from './helpers/twitter-helper.js'
 import _ from 'lodash';
 import axios from 'axios'
 import fs from 'fs';
+import fetch from 'node-fetch'
 
 export default class SaleTracker {
   config: any
@@ -34,7 +35,7 @@ export default class SaleTracker {
       return _.includes(lockFile.processedSignatures, tx.signature)
     })
     console.log("Got transactions", confirmedSignatures.length);
-
+    //console.log(await this.getSOLtoUSD());
     for (let confirmedSignature of confirmedSignatures) {
       let saleInfo = await me._parseTransactionForSaleInfo(confirmedSignature.signature);
       if (saleInfo) {
@@ -45,6 +46,17 @@ export default class SaleTracker {
     }
     console.log("Done");
   }
+
+  
+  /*async getSOLtoUSD() {
+    const response = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=solana&vs_currencies=usd', {
+    method: 'GET',
+    headers: {
+    'accept': 'application/json',
+    }});
+    console.log(JSON.stringify(response));
+    return response;
+}*/
 
   /**
    * A basic factory to return the output plugin.

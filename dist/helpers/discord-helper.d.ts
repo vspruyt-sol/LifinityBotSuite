@@ -7,6 +7,7 @@ export default class DiscordHelper {
     constructor(config: any);
     _createWebhookData(saleInfo: any): {
         username: string;
+        avatar_url: string;
         embeds: {
             author: {
                 name: string;
@@ -17,7 +18,7 @@ export default class DiscordHelper {
                 inline?: undefined;
             } | {
                 name: string;
-                value: any;
+                value: string;
                 inline: boolean;
             })[];
             color: number;
@@ -25,6 +26,13 @@ export default class DiscordHelper {
             url: string;
             thumbnail: {
                 url: string;
+            };
+            image: {
+                url: string;
+            };
+            footer: {
+                text: string;
+                icon_url: string | undefined;
             };
             timestamp: string;
         }[];

@@ -14,6 +14,7 @@ import TwitterHelper from './helpers/twitter-helper.js';
 import _ from 'lodash';
 import axios from 'axios';
 import fs from 'fs';
+import fetch from 'node-fetch';
 export default class SaleTracker {
     constructor(config, outputType) {
         this.config = config;
@@ -46,6 +47,7 @@ export default class SaleTracker {
             console.log("Done");
         });
     }
+
     /**
      * A basic factory to return the output plugin.
      * @returns
