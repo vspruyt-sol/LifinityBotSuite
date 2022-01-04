@@ -53,12 +53,12 @@ class DiscordHelper {
                         },
                         {
                             name: "Seller",
-                            value: `[Seller](${addressUrl + saleInfo.seller})`,
+                            value: `${saleInfo.seller} ([Seller](${addressUrl + saleInfo.seller}))`,
                             inline: true,
                         },
                         {
                             name: "Buyer",
-                            value: `[Buyer](${addressUrl + saleInfo.buyer})`,
+                            value: `${saleInfo.buyer} ([Buyer](${addressUrl + saleInfo.buyer}))`,
                             inline: true,
                         },
                         {

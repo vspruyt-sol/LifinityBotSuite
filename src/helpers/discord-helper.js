@@ -49,15 +49,15 @@ export default class DiscordHelper {
               value: saleInfo.saleAmount,
             },
             {
-              name: "Seller",
-              value: `[Seller](${addressUrl + saleInfo.seller})`,
-              inline: true,
-            },
-            {
-              name: "Buyer",
-              value: `[Buyer](${addressUrl + saleInfo.buyer})`,
-              inline: true,
-            },
+                name: "Seller",
+                value: `${saleInfo.seller} ([Seller](${addressUrl + saleInfo.seller}))`,
+                inline: true,
+              },
+              {
+                name: "Buyer",
+                value: `${saleInfo.buyer} ([Buyer](${addressUrl + saleInfo.buyer}))`,
+                inline: true,
+              },
             {
               name: "NFT",
               value: `[NFT](${saleInfo.nftInfo.image})`,
