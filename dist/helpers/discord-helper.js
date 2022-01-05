@@ -33,6 +33,8 @@ class DiscordHelper {
             MagicEden: "https://i.postimg.cc/9FKyssLm/ME.png",
             Solanart: "https://i.postimg.cc/gJgZs7wP/solanart.png",
         };
+        const sweeperAddress = "A9DsyEuQP5J4fizYuWXKwgGebThNkFm9NEXFzBbeaEdr";
+        const isSweeper = sweeperAddress === saleInfo.buyer;
         let imgUrl;
         if (saleInfo.marketPlace == "MagicEden") {
             imgUrl = favicons.MagicEden;
@@ -70,7 +72,7 @@ class DiscordHelper {
                         },
                         {
                             name: "Rarity",
-                            value: `[HowRare](${howRareUrl + idNbr})/[MoonRank](${moonRankUrl + saleInfo.nftInfo.mintAddress})`,
+                            value: `[HowRare (${saleInfo.rarity.howRare})](${howRareUrl + idNbr})/[MoonRank](${moonRankUrl + saleInfo.nftInfo.mintAddress})`,
                             inline: true,
                         },
                         {
@@ -80,7 +82,7 @@ class DiscordHelper {
                         },
                     ],
                     color: 5793266,
-                    title: `${saleInfo.nftInfo.id} → SOLD 🔥`,
+                    title: `${saleInfo.nftInfo.id} → ${isSweeper ? "SWEPT 🧹" : "SOLD 🔥"}`,
                     url: transactionUrl + saleInfo.txSignature,
                     thumbnail: {
                         url: `${gifUrl + idNbr}`,
