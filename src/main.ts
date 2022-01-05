@@ -37,13 +37,13 @@ export default class SaleTracker {
     console.log("Got transactions", confirmedSignatures.length);
     const usdValueJSON:any = await me.getSOLtoUSD();
     const usdValue = usdValueJSON.solana.usd;
-    const rarityRankingJSON:any = await me.getCollectionRarity();
+    //const rarityRankingJSON:any = await me.getCollectionRarity();
     for (let confirmedSignature of confirmedSignatures) {
       let saleInfo:any = await me._parseTransactionForSaleInfo(confirmedSignature.signature);
       if (saleInfo) {
-        saleInfo.rarity = {
+        /*saleInfo.rarity = {
           howRare: me.getHowrareItemRarity(saleInfo.nftInfo.id, rarityRankingJSON.howRare.result.data.items)
-        }
+        }*/
         saleInfo.usdValue = Math.round((usdValue * saleInfo.saleAmount)*100)/100;
         await me._getOutputPlugin().send(saleInfo);
       }
@@ -53,7 +53,7 @@ export default class SaleTracker {
     console.log("Done");
   }
 
-  getHowrareItemRarity(id:any, items:any){
+  /*getHowrareItemRarity(id:any, items:any){
     return items.find((item:any) => item.name === id).rank;
   }
 
@@ -67,7 +67,7 @@ export default class SaleTracker {
       return {
         howRare
       }
-  }
+  }*/
 
   async getSOLtoUSD() {
     const response = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=solana&vs_currencies=usd', {

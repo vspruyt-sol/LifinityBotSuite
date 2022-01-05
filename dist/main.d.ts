@@ -11,10 +11,6 @@ export default class SaleTracker {
      * The main function.
      */
     checkSales(): Promise<void>;
-    getHowrareItemRarity(id: any, items: any): any;
-    getCollectionRarity(): Promise<{
-        howRare: unknown;
-    }>;
     getSOLtoUSD(): Promise<unknown>;
     /**
      * A basic factory to return the output plugin.

@@ -43,13 +43,13 @@ class SaleTracker {
             console.log("Got transactions", confirmedSignatures.length);
             const usdValueJSON = yield me.getSOLtoUSD();
             const usdValue = usdValueJSON.solana.usd;
-            const rarityRankingJSON = yield me.getCollectionRarity();
+            //const rarityRankingJSON:any = await me.getCollectionRarity();
             for (let confirmedSignature of confirmedSignatures) {
                 let saleInfo = yield me._parseTransactionForSaleInfo(confirmedSignature.signature);
                 if (saleInfo) {
-                    saleInfo.rarity = {
-                        howRare: me.getHowrareItemRarity(saleInfo.nftInfo.id, rarityRankingJSON.howRare.result.data.items)
-                    };
+                    /*saleInfo.rarity = {
+                      howRare: me.getHowrareItemRarity(saleInfo.nftInfo.id, rarityRankingJSON.howRare.result.data.items)
+                    }*/
                     saleInfo.usdValue = Math.round((usdValue * saleInfo.saleAmount) * 100) / 100;
                     yield me._getOutputPlugin().send(saleInfo);
                 }
@@ -59,23 +59,21 @@ class SaleTracker {
             console.log("Done");
         });
     }
-    getHowrareItemRarity(id, items) {
-        return items.find((item) => item.name === id).rank;
+    /*getHowrareItemRarity(id:any, items:any){
+      return items.find((item:any) => item.name === id).rank;
     }
-    getCollectionRarity() {
-        return __awaiter(this, void 0, void 0, function* () {
-            const howrareResponse = yield (0, node_fetch_1.default)('https://howrare.is/api/v0.1/collections/lifinityflares', {
-                method: 'GET',
-                headers: {
-                    'accept': 'application/json',
-                }
-            });
-            const howRare = yield howrareResponse.json();
-            return {
-                howRare
-            };
-        });
-    }
+  
+    async getCollectionRarity() {
+      const howrareResponse = await fetch('https://howrare.is/api/v0.1/collections/lifinityflares', {
+        method: 'GET',
+        headers: {
+        'accept': 'application/json',
+        }});
+        const howRare = await howrareResponse.json();
+        return {
+          howRare
+        }
+    }*/
     getSOLtoUSD() {
         return __awaiter(this, void 0, void 0, function* () {
             const response = yield (0, node_fetch_1.default)('https://api.coingecko.com/api/v3/simple/price?ids=solana&vs_currencies=usd', {
