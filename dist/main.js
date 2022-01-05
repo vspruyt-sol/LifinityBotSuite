@@ -19,6 +19,7 @@ const twitter_helper_js_1 = __importDefault(require("./helpers/twitter-helper.js
 const lodash_1 = __importDefault(require("lodash"));
 const axios_1 = __importDefault(require("axios"));
 const fs_1 = __importDefault(require("fs"));
+const node_fetch_1 = __importDefault(require("node-fetch"));
 class SaleTracker {
     constructor(config, outputType) {
         this.config = config;
@@ -40,10 +41,12 @@ class SaleTracker {
                 return lodash_1.default.includes(lockFile.processedSignatures, tx.signature);
             });
             console.log("Got transactions", confirmedSignatures.length);
-            //console.log(await this.getSOLtoUSD());
+            const usdValueJSON = yield me.getSOLtoUSD();
+            const usdValue = usdValueJSON.solana.usd;
             for (let confirmedSignature of confirmedSignatures) {
                 let saleInfo = yield me._parseTransactionForSaleInfo(confirmedSignature.signature);
                 if (saleInfo) {
+                    saleInfo.usdValue = Math.round((usdValue * saleInfo.saleAmount) * 100) / 100;
                     yield me._getOutputPlugin().send(saleInfo);
                 }
                 yield me._updateLockFile(confirmedSignature.signature);
@@ -52,15 +55,17 @@ class SaleTracker {
             console.log("Done");
         });
     }
-    /*async getSOLtoUSD() {
-      const response = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=solana&vs_currencies=usd', {
-      method: 'GET',
-      headers: {
-      'accept': 'application/json',
-      }});
-      console.log(JSON.stringify(response));
-      return response;
-  }*/
+    getSOLtoUSD() {
+        return __awaiter(this, void 0, void 0, function* () {
+            const response = yield (0, node_fetch_1.default)('https://api.coingecko.com/api/v3/simple/price?ids=solana&vs_currencies=usd', {
+                method: 'GET',
+                headers: {
+                    'accept': 'application/json',
+                }
+            });
+            return yield response.json();
+        });
+    }
     /**
      * A basic factory to return the output plugin.
      * @returns
@@ -118,7 +123,7 @@ class SaleTracker {
             let file = me._readOrCreateAuditFile();
             file.processedSignatures.push(signature);
             if (file.processedSignatures.length > 300) {
-                file.processedSignatures = lodash_1.default.takeRight(file.processedSignatures, 10);
+                file.processedSignatures = lodash_1.default.takeRight(file.processedSignatures, 25);
             }
             yield fs_1.default.writeFileSync(me.auditFilePath, JSON.stringify(file));
         });
@@ -213,7 +218,8 @@ class SaleTracker {
                     nftInfo: {
                         id: lodash_1.default.get(mintMetaData, `data.name`),
                         name: lodash_1.default.get(mintMetaData, `data.name`),
-                        image: arWeaveInfo.data.image
+                        image: arWeaveInfo.data.image,
+                        mintAddress: lodash_1.default.get(mintMetaData, `mint`),
                     }
                 };
             }

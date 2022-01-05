@@ -14,7 +14,7 @@ export default class DiscordHelper {
             };
             fields: ({
                 name: string;
-                value: any;
+                value: string;
                 inline?: undefined;
             } | {
                 name: string;

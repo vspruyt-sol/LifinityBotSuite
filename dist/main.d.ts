@@ -11,6 +11,7 @@ export default class SaleTracker {
      * The main function.
      */
     checkSales(): Promise<void>;
+    getSOLtoUSD(): Promise<unknown>;
     /**
      * A basic factory to return the output plugin.
      * @returns
@@ -86,6 +87,7 @@ export default class SaleTracker {
             id: any;
             name: any;
             image: any;
+            mintAddress: string | undefined;
         };
     } | undefined>;
     /**

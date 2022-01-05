@@ -35,10 +35,12 @@ export default class SaleTracker {
       return _.includes(lockFile.processedSignatures, tx.signature)
     })
     console.log("Got transactions", confirmedSignatures.length);
-    //console.log(await this.getSOLtoUSD());
+    const usdValueJSON:any = await me.getSOLtoUSD();
+    const usdValue = usdValueJSON.solana.usd;
     for (let confirmedSignature of confirmedSignatures) {
-      let saleInfo = await me._parseTransactionForSaleInfo(confirmedSignature.signature);
+      let saleInfo:any = await me._parseTransactionForSaleInfo(confirmedSignature.signature);
       if (saleInfo) {
+        saleInfo.usdValue = Math.round((usdValue * saleInfo.saleAmount)*100)/100;
         await me._getOutputPlugin().send(saleInfo);
       }
       await me._updateLockFile(confirmedSignature.signature);
@@ -48,15 +50,14 @@ export default class SaleTracker {
   }
 
   
-  /*async getSOLtoUSD() {
+  async getSOLtoUSD() {
     const response = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=solana&vs_currencies=usd', {
     method: 'GET',
     headers: {
     'accept': 'application/json',
     }});
-    console.log(JSON.stringify(response));
-    return response;
-}*/
+    return await response.json();
+}
 
   /**
    * A basic factory to return the output plugin.
@@ -113,7 +114,7 @@ export default class SaleTracker {
     let file = me._readOrCreateAuditFile();
     file.processedSignatures.push(signature);
     if (file.processedSignatures.length > 300) {
-      file.processedSignatures = _.takeRight(file.processedSignatures, 10);
+      file.processedSignatures = _.takeRight(file.processedSignatures, 25);
     }
     await fs.writeFileSync(me.auditFilePath, JSON.stringify(file));
   }
@@ -216,7 +217,8 @@ export default class SaleTracker {
         nftInfo: {
           id: _.get(mintMetaData, `data.name`),
           name: _.get(mintMetaData, `data.name`),
-          image: arWeaveInfo.data.image
+          image: arWeaveInfo.data.image,
+          mintAddress: _.get(mintMetaData, `mint`),
         }
       }
     }

@@ -18,6 +18,8 @@ export default class DiscordHelper {
     const addressUrl = "https://explorer.solana.com/address/";
     const gifUrl = "https://nft.lifinity.io/api/download/gif/";
     const lifinityUrl = "https://i.postimg.cc/k4qHK2Sp/ezgif-com-gif-maker.png";
+    const howRareUrl ="https://howrare.is/lifinityflares/";
+    const moonRankUrl = "https://moonrank.app/collection/lifinity_flares/";
     const favicons = {
       MagicEden: "https://i.postimg.cc/9FKyssLm/ME.png",
       Solanart: "https://i.postimg.cc/gJgZs7wP/solanart.png",
@@ -42,7 +44,7 @@ export default class DiscordHelper {
           fields: [
             {
               name: "Price",
-              value: saleInfo.saleAmount,
+              value: `${saleInfo.saleAmount}◎ ($${saleInfo.usdValue})`,
             },
             {
               name: "Seller",
@@ -60,9 +62,14 @@ export default class DiscordHelper {
               inline: false,
             },
             {
+              name: "Rarity",
+              value: `[HowRare](${howRareUrl + idNbr})/[MoonRank](${moonRankUrl+saleInfo.nftInfo.mintAddress})`,
+              inline: true,
+            },
+            {
               name: "Transaction ID",
               value: `[Transaction](${transactionUrl + saleInfo.txSignature})`,
-              inline: false,
+              inline: true,
             },
           ],
           color: 5793266,

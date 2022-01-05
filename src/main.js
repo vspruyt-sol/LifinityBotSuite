@@ -36,15 +36,30 @@ export default class SaleTracker {
                 return _.includes(lockFile.processedSignatures, tx.signature);
             });
             console.log("Got transactions", confirmedSignatures.length);
+            const usdValue = (yield me.getSOLtoUSD()).solana.usd;
             for (let confirmedSignature of confirmedSignatures) {
                 let saleInfo = yield me._parseTransactionForSaleInfo(confirmedSignature.signature);
+
                 if (saleInfo) {
+                    saleInfo.usdValue = Math.round((usdValue * saleInfo.saleAmount)*100)/100;
                     yield me._getOutputPlugin().send(saleInfo);
                 }
                 yield me._updateLockFile(confirmedSignature.signature);
                 console.log("Updated lockfile", confirmedSignature.signature);
             }
             console.log("Done");
+        });
+    }
+
+    getSOLtoUSD() {
+        return __awaiter(this, void 0, void 0, function* () {
+            const response = yield (0, fetch)('https://api.coingecko.com/api/v3/simple/price?ids=solana&vs_currencies=usd', {
+                method: 'GET',
+                headers: {
+                    'accept': 'application/json',
+                }
+            });
+            return yield response.json();
         });
     }
 
@@ -105,7 +120,7 @@ export default class SaleTracker {
             let file = me._readOrCreateAuditFile();
             file.processedSignatures.push(signature);
             if (file.processedSignatures.length > 300) {
-                file.processedSignatures = _.takeRight(file.processedSignatures, 10);
+                file.processedSignatures = _.takeRight(file.processedSignatures, 25);
             }
             yield fs.writeFileSync(me.auditFilePath, JSON.stringify(file));
         });
@@ -188,6 +203,7 @@ export default class SaleTracker {
                     console.log("Not an NFT transaction that we're interested in", mintMetaData);
                     return;
                 }
+                
                 let arWeaveUri = _.get(mintMetaData, `data.uri`);
                 let arWeaveInfo = yield axios.get(arWeaveUri);
                 return {
@@ -200,7 +216,8 @@ export default class SaleTracker {
                     nftInfo: {
                         id: _.get(mintMetaData, `data.name`),
                         name: _.get(mintMetaData, `data.name`),
-                        image: arWeaveInfo.data.image
+                        image: arWeaveInfo.data.image,
+                        mintAddress: _.get(mintMetaData, `mint`),
                     }
                 };
             }

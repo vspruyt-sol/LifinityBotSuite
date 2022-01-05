@@ -46,16 +46,7 @@ class TwitterHelper {
      */
     formatTweet(saleInfo) {
         return {
-            status: `
-  ${saleInfo.nftInfo.id} purchased for ${saleInfo.saleAmount} S◎L 🐦 
-  Marketplaces 📒 
-  → https://digitaleyes.market/collections/Flutter
-  → https://magiceden.io/marketplace?collection_symbol=flutter
-  
-  @FlutterNFT #FlutterNFT #FlutterTogether
-  
-  Explorer: https://explorer.solana.com/tx/${saleInfo.txSignature}
-    `
+            status: `this is a test ${Math.round(Date.now() / 1000)}`
         };
     }
     /**
@@ -66,16 +57,22 @@ class TwitterHelper {
         return __awaiter(this, void 0, void 0, function* () {
             const me = this;
             let tweetInfo = me.formatTweet(saleInfo);
-            let image = yield me.getBase64(`${saleInfo.nftInfo.image}`);
+            /*let image = await me.getBase64(`${saleInfo.nftInfo.image}`);
             let mediaUpload;
             try {
-                mediaUpload = yield me.client.post('media/upload', { media_data: image });
+              mediaUpload = await me.client.post('media/upload', { media_data: image });
+            } catch (err) {
+              console.log(JSON.stringify(err));
+              throw err;
+            }*/
+            //await me.client.post('statuses/update.json', { status: tweetInfo.status, media_ids: mediaUpload.media_id_string });
+            try {
+                yield me.client.post('statuses/update.json', { status: tweetInfo.status });
             }
             catch (err) {
                 console.log(JSON.stringify(err));
                 throw err;
             }
-            yield me.client.post('statuses/update.json', { status: tweetInfo.status, media_ids: mediaUpload.media_id_string });
         });
     }
 }

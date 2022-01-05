@@ -13,11 +13,11 @@
       "addresses": ["CJsLwbP1iu5DuUikHEJnLfANgKy6stB2uFgvBBHoyxwz"]
     }],
   "twitter": {
-    "consumerApiKey": "",
-    "consumerApiSecret": "",
+    "consumerApiKey": "sxnXTfxpxRSnGSEQiI1583Biy",
+    "consumerApiSecret": "p2fKo3Nq3YS5iAIQkKGYH6ExHLiprdZ7Xp0seDgtunjRX1MRC6",
     "oauth": {
-      "token": "",
-      "secret": ""
+      "token": "1478649888569270272-SXv9DmFSdgIfp2i5VGeefybncGHldd",
+      "secret": "aCzcmwls2ueAAo1Q01imaKHAxHTrPhWK63sKDNr5vtVYu"
     }
   },
   "discord": {

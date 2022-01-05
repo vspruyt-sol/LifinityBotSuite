@@ -38,16 +38,7 @@ export default class TwitterHelper {
    */
   formatTweet(saleInfo:any) {
     return {
-      status: `
-  ${saleInfo.nftInfo.id} purchased for ${saleInfo.saleAmount} S◎L 🐦 
-  Marketplaces 📒 
-  → https://digitaleyes.market/collections/Flutter
-  → https://magiceden.io/marketplace?collection_symbol=flutter
-  
-  @FlutterNFT #FlutterNFT #FlutterTogether
-  
-  Explorer: https://explorer.solana.com/tx/${saleInfo.txSignature}
-    `
+      status: `this is a test ${Math.round(Date.now() / 1000)}`
     };
   }
 
@@ -58,14 +49,21 @@ export default class TwitterHelper {
   async send(saleInfo:any) {
     const me = this;
     let tweetInfo = me.formatTweet(saleInfo);
-    let image = await me.getBase64(`${saleInfo.nftInfo.image}`);
+    /*let image = await me.getBase64(`${saleInfo.nftInfo.image}`);
     let mediaUpload;
     try {
       mediaUpload = await me.client.post('media/upload', { media_data: image });
     } catch (err) {
       console.log(JSON.stringify(err));
       throw err;
+    }*/
+    //await me.client.post('statuses/update.json', { status: tweetInfo.status, media_ids: mediaUpload.media_id_string });
+    try{
+      await me.client.post('statuses/update.json', { status: tweetInfo.status});
     }
-    await me.client.post('statuses/update.json', { status: tweetInfo.status, media_ids: mediaUpload.media_id_string });
+    catch(err){
+      console.log(JSON.stringify(err));
+      throw err;
+    }
   }
 }
