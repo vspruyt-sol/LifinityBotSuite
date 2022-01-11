@@ -72,7 +72,7 @@ class DiscordHelper {
                         },
                         {
                             name: "Rarity",
-                            value: `[HowRare](${howRareUrl + idNbr})/[MoonRank](${moonRankUrl + saleInfo.nftInfo.mintAddress})`,
+                            value: `[HowRare (${saleInfo.rarity.howRare})](${howRareUrl + idNbr})/[MoonRank ((${saleInfo.rarity.moonRank})](${moonRankUrl + saleInfo.nftInfo.mintAddress})`,
                             inline: true,
                         },
                         {

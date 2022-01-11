@@ -5,12 +5,15 @@ export default class SaleTracker {
     config: any;
     connection: Connection;
     auditFilePath: string;
+    howRarePath: string;
+    moonRankPath: string;
     outputType: string;
     constructor(config: any, outputType: string);
     /**
      * The main function.
      */
     checkSales(): Promise<void>;
+    getRarity(id: any, items: any): any;
     getSOLtoUSD(): Promise<unknown>;
     /**
      * A basic factory to return the output plugin.
@@ -30,6 +33,11 @@ export default class SaleTracker {
      */
     _readOrCreateAuditFile(): {
         processedSignatures: string[];
+        lastProcessedSignature: string;
+    };
+    getRankings(): {
+        howRare: any;
+        moonRank: any;
     };
     /**
      * Keeping it simple. Using a file to track processed signatures. Routinely trimming

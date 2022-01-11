@@ -20,6 +20,8 @@ export default class SaleTracker {
         this.config = config;
         this.connection = new Connection(this.config.rpc);
         this.auditFilePath = `./auditfile-${outputType}.json`;
+        this.howRarePath = `./howrare.json`;
+        this.moonRankPath = `./moonrank.json`;
         this.outputType = outputType;
     }
     /**
@@ -29,22 +31,36 @@ export default class SaleTracker {
         return __awaiter(this, void 0, void 0, function* () {
             const me = this;
             let lockFile = me._readOrCreateAuditFile();
-            let lastProcessedSignature = _.last(lockFile.processedSignatures);
-            console.log("Started");
-            const confirmedSignatures = _.reverse(yield this.connection.getConfirmedSignaturesForAddress2(new PublicKey(me.config.primaryRoyaltiesAccount), { limit: 25, until: lastProcessedSignature }));
-            _.remove(confirmedSignatures, (tx) => {
+            let rankings = me.getRankings();
+            //let lastProcessedSignature = _.last(lockFile.processedSignatures);
+            let lastProcessedSignature = lockFile.lastProcessedSignature;
+            let confirmedSignatures = _.reverse(yield this.connection.getConfirmedSignaturesForAddress2(new PublicKey(me.config.primaryRoyaltiesAccount), { limit: 25, until: lastProcessedSignature }));
+            
+            let match = false;
+            let trimmedConfirmedSignatures = confirmedSignatures.reduce((acc, sign) => {
+                if(match){
+                    acc.push(sign);
+                }
+                if(sign.signature === lastProcessedSignature) match = true;
+                return acc;
+            }, []);
+
+            if(match) confirmedSignatures = trimmedConfirmedSignatures;
+            
+            /*_.remove(confirmedSignatures, (tx) => {
                 return _.includes(lockFile.processedSignatures, tx.signature);
-            });
+            });*/
+            
             console.log("Got transactions", confirmedSignatures.length);
             const usdValue = (yield me.getSOLtoUSD()).solana.usd;
-            //const rarityRankingJSON = yield me.getCollectionRarity();
             for (let confirmedSignature of confirmedSignatures) {
                 let saleInfo = yield me._parseTransactionForSaleInfo(confirmedSignature.signature);
 
                 if (saleInfo) {
-                    /*saleInfo.rarity = {
-                        howRare: me.getHowrareItemRarity(saleInfo.nftInfo.id, rarityRankingJSON.howRare.result.data.items)
-                    };*/
+                    saleInfo.rarity = {
+                        howRare: me.getRarity(saleInfo.nftInfo.id, rankings.howRare.result.data.items),
+                        moonRank: me.getRarity(saleInfo.nftInfo.id, rankings.moonRank.mints)
+                    };
                     saleInfo.usdValue = Math.round((usdValue * saleInfo.saleAmount)*100)/100;
                     yield me._getOutputPlugin().send(saleInfo);
                 }
@@ -54,23 +70,11 @@ export default class SaleTracker {
             console.log("Done");
         });
     }
-    /*getHowrareItemRarity(id, items) {
+
+    getRarity(id, items) {
         return items.find((item) => item.name === id).rank;
     }
-    getCollectionRarity() {
-        return __awaiter(this, void 0, void 0, function* () {
-            const howrareResponse = yield (0,fetch)('https://howrare.is/api/v0.1/collections/lifinityflares', {
-                method: 'GET',
-                headers: {
-                    'accept': 'application/json',
-                }
-            });
-            const howRare = yield howrareResponse.json();
-            return {
-                howRare
-            };
-        });
-    }*/
+   
     getSOLtoUSD() {
         return __awaiter(this, void 0, void 0, function* () {
             const response = yield (0, fetch)('https://api.coingecko.com/api/v3/simple/price?ids=solana&vs_currencies=usd', {
@@ -109,25 +113,38 @@ export default class SaleTracker {
      * Returns a dummy audit file for first run.
      * @returns
      */
-    _getNewAuditFileStructure() {
+     _getNewAuditFileStructure() {
         return JSON.stringify({
-            processedSignatures: []
+          processedSignatures: [],
+          lastProcessedSignature: null
         });
-    }
-    /**
-     * Returns the auditfile if it exists, if not createss a new empty one.
-     * @returns The contents of the auditfile.
-     */
-    _readOrCreateAuditFile() {
+      }
+    
+      /**
+       * Returns the auditfile if it exists, if not createss a new empty one.
+       * @returns The contents of the auditfile.
+       */
+      _readOrCreateAuditFile() {
         const me = this;
         if (fs.existsSync(me.auditFilePath)) {
-            return JSON.parse(fs.readFileSync(me.auditFilePath).toString());
+          return JSON.parse(fs.readFileSync(me.auditFilePath).toString());
+        } else {
+          fs.writeFileSync(me.auditFilePath, me._getNewAuditFileStructure());
+          return JSON.parse(fs.readFileSync(me.auditFilePath).toString());
         }
-        else {
-            fs.writeFileSync(me.auditFilePath, me._getNewAuditFileStructure());
-            return JSON.parse(fs.readFileSync(me.auditFilePath).toString());
+      }
+
+    getRankings(){
+        const me = this;
+        const howRare = JSON.parse(fs.readFileSync(me.howRarePath).toString());
+        const moonRank = JSON.parse(fs.readFileSync(me.moonRankPath).toString());
+    
+        return {
+            howRare,
+            moonRank
         }
     }
+
     /**
      * Keeping it simple. Using a file to track processed signatures. Routinely trimming
      * signatures from the file to keep size in check.
@@ -142,6 +159,7 @@ export default class SaleTracker {
             if (file.processedSignatures.length > 300) {
                 file.processedSignatures = _.takeRight(file.processedSignatures, 25);
             }
+            file.lastProcessedSignature = signature;
             yield fs.writeFileSync(me.auditFilePath, JSON.stringify(file));
         });
     }

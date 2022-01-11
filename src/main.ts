@@ -12,11 +12,15 @@ export default class SaleTracker {
   config: any
   connection: Connection;
   auditFilePath: string;
+  howRarePath: string;
+  moonRankPath: string;
   outputType: string;
   constructor(config: any, outputType: string) {
     this.config = config;
     this.connection = new Connection(this.config.rpc);
     this.auditFilePath = `./auditfile-${outputType}.json`;
+    this.howRarePath = `./howrare.json`;
+    this.moonRankPath = `./moonrank.json`;
     this.outputType = outputType;
   }
 
@@ -26,14 +30,24 @@ export default class SaleTracker {
   async checkSales() {
     const me = this;
     let lockFile = me._readOrCreateAuditFile();
-    let lastProcessedSignature = _.last(lockFile.processedSignatures);
+    let rankings = me.getRankings();
+    let lastProcessedSignature = lockFile.lastProcessedSignature;
     console.log("Started");
-    const confirmedSignatures: ConfirmedSignatureInfo[] = _.reverse(
+    let confirmedSignatures: ConfirmedSignatureInfo[] = _.reverse(
       await this.connection.getConfirmedSignaturesForAddress2(new PublicKey(me.config.primaryRoyaltiesAccount), { limit: 25, until: lastProcessedSignature })
     );
-    _.remove(confirmedSignatures, (tx: any) => {
-      return _.includes(lockFile.processedSignatures, tx.signature)
-    })
+
+    let match = false;
+    let trimmedConfirmedSignatures = confirmedSignatures.reduce((acc: ConfirmedSignatureInfo[], sign) => {
+        if(match){
+            acc.push(sign);
+        }
+        if(sign.signature === lastProcessedSignature) match = true;
+        return acc;
+    }, []);
+
+    if(match) confirmedSignatures = trimmedConfirmedSignatures;
+
     console.log("Got transactions", confirmedSignatures.length);
     const usdValueJSON:any = await me.getSOLtoUSD();
     const usdValue = usdValueJSON.solana.usd;
@@ -41,9 +55,10 @@ export default class SaleTracker {
     for (let confirmedSignature of confirmedSignatures) {
       let saleInfo:any = await me._parseTransactionForSaleInfo(confirmedSignature.signature);
       if (saleInfo) {
-        /*saleInfo.rarity = {
-          howRare: me.getHowrareItemRarity(saleInfo.nftInfo.id, rarityRankingJSON.howRare.result.data.items)
-        }*/
+        saleInfo.rarity = {
+          howRare: me.getRarity(saleInfo.nftInfo.id, rankings.howRare.result.data.items),
+          moonRank: me.getRarity(saleInfo.nftInfo.id, rankings.moonRank.mints)
+        };
         saleInfo.usdValue = Math.round((usdValue * saleInfo.saleAmount)*100)/100;
         await me._getOutputPlugin().send(saleInfo);
       }
@@ -53,21 +68,9 @@ export default class SaleTracker {
     console.log("Done");
   }
 
-  /*getHowrareItemRarity(id:any, items:any){
-    return items.find((item:any) => item.name === id).rank;
+  getRarity(id: any, items: any) {
+      return items.find((item: any) => item.name === id).rank;
   }
-
-  async getCollectionRarity() {
-    const howrareResponse = await fetch('https://howrare.is/api/v0.1/collections/lifinityflares', {
-      method: 'GET',
-      headers: {
-      'accept': 'application/json',
-      }});
-      const howRare = await howrareResponse.json();
-      return {
-        howRare
-      }
-  }*/
 
   async getSOLtoUSD() {
     const response = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=solana&vs_currencies=usd', {
@@ -104,7 +107,8 @@ export default class SaleTracker {
    */
   _getNewAuditFileStructure() {
     return JSON.stringify({
-      processedSignatures: []
+      processedSignatures: [],
+      lastProcessedSignature: null
     });
   }
 
@@ -112,13 +116,24 @@ export default class SaleTracker {
    * Returns the auditfile if it exists, if not createss a new empty one.
    * @returns The contents of the auditfile.
    */
-  _readOrCreateAuditFile(): { processedSignatures: string[] } {
+  _readOrCreateAuditFile(): { processedSignatures: string[], lastProcessedSignature: string } {
     const me = this;
     if (fs.existsSync(me.auditFilePath)) {
       return JSON.parse(fs.readFileSync(me.auditFilePath).toString());
     } else {
       fs.writeFileSync(me.auditFilePath, me._getNewAuditFileStructure());
       return JSON.parse(fs.readFileSync(me.auditFilePath).toString());
+    }
+  }
+
+  getRankings() {
+    const me = this;
+    const howRare = JSON.parse(fs.readFileSync(me.howRarePath).toString());
+    const moonRank = JSON.parse(fs.readFileSync(me.moonRankPath).toString());
+
+    return {
+      howRare,
+      moonRank
     }
   }
 
