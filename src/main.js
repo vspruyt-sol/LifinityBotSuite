@@ -36,7 +36,7 @@ export default class SaleTracker {
             let lastProcessedSignature = lockFile.lastProcessedSignature;
             let confirmedSignatures = _.reverse(yield this.connection.getConfirmedSignaturesForAddress2(new PublicKey(me.config.primaryRoyaltiesAccount), { limit: 25, until: lastProcessedSignature }));
             
-            let match = false;
+            /*let match = false;
             let trimmedConfirmedSignatures = confirmedSignatures.reduce((acc, sign) => {
                 if(match){
                     acc.push(sign);
@@ -45,11 +45,11 @@ export default class SaleTracker {
                 return acc;
             }, []);
 
-            if(match) confirmedSignatures = trimmedConfirmedSignatures;
+            if(match) confirmedSignatures = trimmedConfirmedSignatures;*/
             
-            /*_.remove(confirmedSignatures, (tx) => {
+            _.remove(confirmedSignatures, (tx) => {
                 return _.includes(lockFile.processedSignatures, tx.signature);
-            });*/
+            });
             
             console.log("Got transactions", confirmedSignatures.length);
             const usdValue = (yield me.getSOLtoUSD()).solana.usd;

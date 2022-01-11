@@ -37,7 +37,7 @@ export default class SaleTracker {
       await this.connection.getConfirmedSignaturesForAddress2(new PublicKey(me.config.primaryRoyaltiesAccount), { limit: 25, until: lastProcessedSignature })
     );
 
-    let match = false;
+    /*let match = false;
     let trimmedConfirmedSignatures = confirmedSignatures.reduce((acc: ConfirmedSignatureInfo[], sign) => {
         if(match){
             acc.push(sign);
@@ -46,7 +46,11 @@ export default class SaleTracker {
         return acc;
     }, []);
 
-    if(match) confirmedSignatures = trimmedConfirmedSignatures;
+    if(match) confirmedSignatures = trimmedConfirmedSignatures;*/
+
+    _.remove(confirmedSignatures, (tx: any) => {
+      return _.includes(lockFile.processedSignatures, tx.signature)
+    })
 
     console.log("Got transactions", confirmedSignatures.length);
     const usdValueJSON:any = await me.getSOLtoUSD();

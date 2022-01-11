@@ -40,8 +40,17 @@ export default class TwitterHelper {
      * @returns
      */
     formatTweet(saleInfo) {
+        const sweeperAddress = "A9DsyEuQP5J4fizYuWXKwgGebThNkFm9NEXFzBbeaEdr";
+        const isSweeper = sweeperAddress === saleInfo.buyer;
         return {
-            status: `this is a test ${Math.round(Date.now() / 1000)}`
+            status: 
+`Message:
+    ${saleInfo.nftInfo.id} → ${isSweeper ? "SWEPT 🧹":"SOLD 🔥"}
+Price: 
+    ${saleInfo.saleAmount}◎ ($${saleInfo.usdValue})
+Transaction: 
+    https://explorer.solana.com/tx/${saleInfo.txSignature}
+`
         };
     }
     /**

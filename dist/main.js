@@ -40,17 +40,19 @@ class SaleTracker {
             let lastProcessedSignature = lockFile.lastProcessedSignature;
             console.log("Started");
             let confirmedSignatures = lodash_1.default.reverse(yield this.connection.getConfirmedSignaturesForAddress2(new web3_js_1.PublicKey(me.config.primaryRoyaltiesAccount), { limit: 25, until: lastProcessedSignature }));
-            let match = false;
-            let trimmedConfirmedSignatures = confirmedSignatures.reduce((acc, sign) => {
-                if (match) {
+            /*let match = false;
+            let trimmedConfirmedSignatures = confirmedSignatures.reduce((acc: ConfirmedSignatureInfo[], sign) => {
+                if(match){
                     acc.push(sign);
                 }
-                if (sign.signature === lastProcessedSignature)
-                    match = true;
+                if(sign.signature === lastProcessedSignature) match = true;
                 return acc;
             }, []);
-            if (match)
-                confirmedSignatures = trimmedConfirmedSignatures;
+        
+            if(match) confirmedSignatures = trimmedConfirmedSignatures;*/
+            lodash_1.default.remove(confirmedSignatures, (tx) => {
+                return lodash_1.default.includes(lockFile.processedSignatures, tx.signature);
+            });
             console.log("Got transactions", confirmedSignatures.length);
             const usdValueJSON = yield me.getSOLtoUSD();
             const usdValue = usdValueJSON.solana.usd;
