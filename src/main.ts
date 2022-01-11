@@ -31,7 +31,9 @@ export default class SaleTracker {
     const me = this;
     let lockFile = me._readOrCreateAuditFile();
     let rankings = me.getRankings();
-    let lastProcessedSignature = lockFile.lastProcessedSignature;
+    
+    let lastProcessedSignature = _.last(lockFile.processedSignatures);
+    //let lastProcessedSignature = lockFile.lastProcessedSignature;
     console.log("Started");
     let confirmedSignatures: ConfirmedSignatureInfo[] = _.reverse(
       await this.connection.getConfirmedSignaturesForAddress2(new PublicKey(me.config.primaryRoyaltiesAccount), { limit: 25, until: lastProcessedSignature })

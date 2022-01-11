@@ -37,7 +37,8 @@ class SaleTracker {
             const me = this;
             let lockFile = me._readOrCreateAuditFile();
             let rankings = me.getRankings();
-            let lastProcessedSignature = lockFile.lastProcessedSignature;
+            let lastProcessedSignature = lodash_1.default.last(lockFile.processedSignatures);
+            //let lastProcessedSignature = lockFile.lastProcessedSignature;
             console.log("Started");
             let confirmedSignatures = lodash_1.default.reverse(yield this.connection.getConfirmedSignaturesForAddress2(new web3_js_1.PublicKey(me.config.primaryRoyaltiesAccount), { limit: 25, until: lastProcessedSignature }));
             /*let match = false;

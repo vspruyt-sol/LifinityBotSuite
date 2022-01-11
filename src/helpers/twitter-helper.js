@@ -48,6 +48,8 @@ export default class TwitterHelper {
     ${saleInfo.nftInfo.id} → ${isSweeper ? "SWEPT 🧹":"SOLD 🔥"}
 Price: 
     ${saleInfo.saleAmount}◎ ($${saleInfo.usdValue})
+Rarity: 
+    Howrare: ${saleInfo.rarity.howRare} | Moonrank: ${saleInfo.rarity.moonRank}
 Transaction: 
     https://explorer.solana.com/tx/${saleInfo.txSignature}
 `
