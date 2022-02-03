@@ -3,8 +3,6 @@ This repository contains code that can be used to run your own marketplace sales
 
 The codebase comes with a cron.js file which can be used to execute the tracking process at routine intervals - it uses a simple auditfile-*.json to track already processed transactions. (Can be replaced with a DB if you want to go that route)
 
-Code developed and open sourced by the @FlutterNFT team. Follow us on Twitter @ https://twitter.com/FlutterNft to show support.
-
 # Notes
 The code is a mishmash of TypeScript and vanilla Javascript. Please excuse the mess. The Metaplex helper classes were taken from https://github.com/solana-labs/solana/tree/1428575be3bb71dc015184b63261609890dd695d/explorer/src/metaplex. (Thanks to the contributor)
 
@@ -14,15 +12,7 @@ NodeJS v14.x or higher and Typescript.
 
 ## Setup
 
-Take a look at the ./config/sample.json file for the values used by the script. It's configured to track Flutter sales right now, but it's just a matter of changing the primaryRoyaltiesAccount, updateAuthority and candyMachineId to get it running for your own NFT collection.
-
-Run the following commands to clone and install dependencies:
-
-    $ git clone git@github.com:flutternft/solana-nft-sales-tracker.git
-    $ cd solana-nft-sales-tracker
-    $ npm install
-    $ npm run build #Might spit out some errors, but it's inconsequential.
-    $ npm run console_run (Essentially runs: node run-script-standalone.js --config='./config/sample.json' --outputType=console)
+Take a look at the ./config/sample.json file for the values used by the script. 
 
 There are various output plugins available:
 - console: Prints the output to the console. Will work out of the box.
